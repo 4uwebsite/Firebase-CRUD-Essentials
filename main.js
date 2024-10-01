@@ -1,6 +1,9 @@
+// PURPOSE:
+// This module packages the essential functions required to run CRUD ops on a RealTime Firebase DB.
+
 // Import Firebase functions.
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"
-import {getDatabase, ref, push, onValue, remove, get, update} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
+import {getDatabase, ref, push, onValue, remove, get, update, set} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
 
 // Configure DB connectivity
 const appSettings = {
@@ -12,10 +15,10 @@ const personsInDB = ref(database, 'persons')
 
 // data object
 const person = {
-    name: 'Rob',
-    age: 23,
+    name: 'Eddard',
+    age: 73,
     gender: 'male',
-    grade: 1200
+    grade: 3200
 }
 
 // push (disable when testing other function)
@@ -26,11 +29,13 @@ onValue(personsInDB, function(snapshot) {
     // Check if snapshot exists
     if (snapshot.exists()) {
         console.log('snapshot object as values:')
-        const values = Object.values(snapshot.val())
-        console.log(values)
+        const values = Object.values(snapshot.val()) // Object values without keys.
+        // console.log(values)
+        console.table(values)
         console.log('snapshot object as entries:')
-        const entries = Object.entries(snapshot.val())
-        console.log(entries)
+        const entries = Object.entries(snapshot.val()) // Object with keys.
+        // console.log(entries)
+        console.table(entries)
     }
     else {
         console.log('snapshot empty')
@@ -56,7 +61,8 @@ get(personsInDBGetKey)
         if (snapshot.exists()) {
             console.log(`Person with key ${getKey}:`)
             const personWithKey = Object.values(snapshot.val())
-            console.log(personWithKey)
+            // console.log(personWithKey)
+            console.table(personWithKey)
         }
         else {
             console.log(`Person with key ${getKey}: Not Found`)
@@ -68,10 +74,10 @@ get(personsInDBGetKey)
 
 // update
 const personUpdated = {
-    age: 99,
-    gender: `unknown`,
-    grade: `n/a`,
-    name: `Braaga`
+    age: 17,
+    gender: `MALE`,
+    grade: 300,
+    name: `Arngelo`
 }
 const updateKey = "-O86fsOCMDl0ZqsO4EP4"
 const personsInDBUpdateKey = ref(database, `persons/${updateKey}`)
@@ -82,3 +88,10 @@ update(personsInDBUpdateKey, personUpdated)
     .catch((error) => {
         console.log(`error:`, error)
     })
+
+// set
+// used to write or replace data at a specified database reference. When you call set, it overwrites any existing data at that location with the new data you provide.
+// IMPORTANT:
+// If you have a nested structure and call set on a parent node, all the child nodes will be overwritten unless you explicitly include them in the new data.
+// Alternative:
+// If you want to update only specific fields without overwriting others, you can use the update function instead of set.
